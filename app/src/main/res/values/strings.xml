@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Modbus Master</string>
+    <string name="get_readings">Get readings</string>
+    <string name="open_profile_page">Open profile page</string>
+</resources>

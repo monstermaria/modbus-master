@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Modbus Master</string>
+    <string name="get_readings">Hämta avläsningar</string>
+    <string name="open_profile_page">Öppna profilsidan</string>
+</resources>
