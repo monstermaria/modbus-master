@@ -13,10 +13,37 @@
         android:layout_height="wrap_content"
         android:text="@string/open_profile_page"
         android:onClick="chooseProfile"/>
+
     <Button
         android:id="@+id/buttonTest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/get_readings"
-        android:onClick="getReadings"/>
+        android:text="@string/get_readings" />
+
+    <Spinner
+        android:id="@+id/readingSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TableLayout
+        android:id="@+id/readingsTable"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </TableLayout>
 </LinearLayout>

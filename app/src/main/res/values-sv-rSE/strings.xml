@@ -14,4 +14,8 @@
     <string name="new_profile">Ny profil</string>
     <string name="save_profile">Spara profil</string>
     <string name="delete_profile">Radera profil</string>
+    <string name="coils">Spolar (DO)</string>
+    <string name="discrete_inputs">Diskreta ingångar (DI)</string>
+    <string name="input_registers">Analoga ingångar (AI)</string>
+    <string name="holding_registers">Lagringsregister (AO)</string>
 </resources>

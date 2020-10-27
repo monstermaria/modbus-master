@@ -13,4 +13,8 @@
     <string name="new_profile">New profile</string>
     <string name="save_profile">Save profile</string>
     <string name="delete_profile">Delete profile</string>
+    <string name="coils">Coils</string>
+    <string name="discrete_inputs">Discrete input</string>
+    <string name="input_registers">Input registers</string>
+    <string name="holding_registers">Holding registers</string>
 </resources>

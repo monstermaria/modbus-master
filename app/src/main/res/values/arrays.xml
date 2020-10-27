@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="address_types">
+        <item>@string/coils</item>
+        <item>@string/discrete_inputs</item>
+        <item>@string/input_registers</item>
+        <item>@string/holding_registers</item>
+    </array>
+</resources>
