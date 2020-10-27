@@ -2,4 +2,15 @@
     <string name="app_name">Modbus Master</string>
     <string name="get_readings">Get readings</string>
     <string name="open_profile_page">Open profile page</string>
+    <string name="profiles">Profiles</string>
+    <string name="create_new_profile">Create new profile</string>
+    <string name="name">Name</string>
+    <string name="ip_address">IP address</string>
+    <string name="port">Port</string>
+    <string name="name_hint">The name of this profile</string>
+    <string name="ip_hint">192.168.0.1</string>
+    <string name="port_hint">502</string>
+    <string name="new_profile">New profile</string>
+    <string name="save_profile">Save profile</string>
+    <string name="delete_profile">Delete profile</string>
 </resources>

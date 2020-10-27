@@ -3,4 +3,15 @@
     <string name="app_name">Modbus Master</string>
     <string name="get_readings">Hämta avläsningar</string>
     <string name="open_profile_page">Öppna profilsidan</string>
+    <string name="profiles">Profiler</string>
+    <string name="create_new_profile">Skapa ny profil</string>
+    <string name="name">Namn</string>
+    <string name="ip_address">IP-adress</string>
+    <string name="port">Port</string>
+    <string name="ip_hint">192.168.0.1</string>
+    <string name="port_hint">502</string>
+    <string name="name_hint">Namnet på den här profilen</string>
+    <string name="new_profile">Ny profil</string>
+    <string name="save_profile">Spara profil</string>
+    <string name="delete_profile">Radera profil</string>
 </resources>
