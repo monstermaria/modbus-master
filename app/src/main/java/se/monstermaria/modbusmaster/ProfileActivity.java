@@ -38,7 +38,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
 
     private void saveProfileToPreferences() {
         SharedPreferences.Editor editor = getSharedPreferences("Active profile", MODE_PRIVATE).edit();
-        editor.putString("ID", String.valueOf(activeProfile.id));
+        editor.putLong("ID", activeProfile.id);
         editor.apply();
     }
 
