@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_margin="5dp"
     tools:context=".MainActivity" >
 
     <Button
@@ -18,7 +19,8 @@
         android:id="@+id/buttonTest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/get_readings" />
+        android:text="@string/reload_readings"
+        android:onClick="initiateReadings"/>
 
     <Spinner
         android:id="@+id/readingSpinner"
@@ -28,22 +30,47 @@
     <TableLayout
         android:id="@+id/readingsTable"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="@drawable/border">
 
         <TableRow
+            android:id="@+id/header"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/addressTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/modbus_address"
+                android:textStyle="bold"
+                style="@style/TableItem" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/valueTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/value"
+                android:textStyle="bold"
+                style="@style/TableItem" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="@string/description"
+                android:textStyle="bold"
+                style="@style/TableItem" />
+
+        </TableRow>
     </TableLayout>
+
+    <Button
+        android:id="@+id/buttonSaveDescriptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_decriptions"
+        android:onClick="initiateReadings"/>
+
 </LinearLayout>

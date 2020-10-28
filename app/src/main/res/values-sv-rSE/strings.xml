@@ -18,4 +18,9 @@
     <string name="discrete_inputs">Diskreta ingångar (DI)</string>
     <string name="input_registers">Analoga ingångar (AI)</string>
     <string name="holding_registers">Lagringsregister (AO)</string>
+    <string name="modbus_address">Modbus-adress</string>
+    <string name="value">Värde</string>
+    <string name="description">Beskrivning</string>
+    <string name="reload_readings">Hämta avläsningar igen</string>
+    <string name="save_decriptions">Spara beskrivningar</string>
 </resources>

@@ -46,7 +46,8 @@
                 android:id="@+id/nameTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/name" />
+                android:text="@string/name"
+                style="@style/TableItem"/>
 
             <EditText
                 android:id="@+id/editTextProfileName"
@@ -66,7 +67,8 @@
                 android:id="@+id/ipAddressTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/ip_address" />
+                android:text="@string/ip_address"
+                style="@style/TableItem"/>
 
             <EditText
                 android:id="@+id/editTextIpAddress"
@@ -86,7 +88,8 @@
                 android:id="@+id/portTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/port" />
+                android:text="@string/port"
+                style="@style/TableItem"/>
 
             <EditText
                 android:id="@+id/editTextPortNumber"

@@ -17,4 +17,9 @@
     <string name="discrete_inputs">Discrete input</string>
     <string name="input_registers">Input registers</string>
     <string name="holding_registers">Holding registers</string>
+    <string name="modbus_address">Modbus address</string>
+    <string name="value">Value</string>
+    <string name="description">Description</string>
+    <string name="reload_readings">Reload readings</string>
+    <string name="save_decriptions">Save descriptions</string>
 </resources>
