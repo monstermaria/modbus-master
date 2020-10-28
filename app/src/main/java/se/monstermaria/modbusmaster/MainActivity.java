@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -78,13 +77,84 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    public void initiateReadings(View view) {
+    ModbusRegisters getActiveReading() {
         Spinner spinner = (Spinner) findViewById(R.id.readingSpinner);
         String readings = (String) spinner.getSelectedItem();
+
+        if (readings.equals(getString(R.string.coils))) {
+            activeReadings = ModbusRegisters.COILS;
+        } else if (readings.equals(getString(R.string.discrete_inputs))) {
+            activeReadings = ModbusRegisters.DISCRETE_INPUTS;
+        } else if (readings.equals(getString(R.string.input_registers))) {
+            activeReadings = ModbusRegisters.INPUT_REGISTERS;
+        } else if (readings.equals(getString(R.string.holding_registers))) {
+            activeReadings = ModbusRegisters.HOLDING_REGISTERS;
+        } else {
+            activeReadings = null;
+        }
+        return activeReadings;
+    }
+
+    void setUpTable(ModbusRegisters registerType, int firstAddress, int numberOfAddresses) {
+        String message = registerType.toString() + ", first address: ";
+        message += firstAddress + ", number of addresses: ";
+        message += String.valueOf(numberOfAddresses);
+        Log.d("Create table", message);
+
+        TableLayout registerTable = findViewById(R.id.readingsTable);
+        resetTable(registerTable);
+
+        for (int i = firstAddress; i < firstAddress + numberOfAddresses; i++) {
+            TableRow row = makeTableRow(registerTable, registerType, i);
+            registerTable.addView(row);
+        }
+    }
+
+    void updateTableWithBitResults(ModbusRegisters registerType, List<Boolean> results,
+                                   int firstAddress) {
+        TableLayout registerTable = findViewById(R.id.readingsTable);
+        int addressOffset = 0;
+
+        if (registerType == ModbusRegisters.COILS) {
+            addressOffset = firstAddress + 1;
+        }
+        if (registerType == ModbusRegisters.DISCRETE_INPUTS) {
+            addressOffset = firstAddress + 10001;
+        }
+
+        for (int i = 0; i < results.size(); i++) {
+            TableRow row = registerTable.findViewById(i + addressOffset);
+            TextView value = row.findViewById(R.id.valueTextView);
+            value.setText(String.valueOf(results.get(i)));
+        }
+    }
+
+    void updateTableWithIntResults(ModbusRegisters registerType, List<Integer> results,
+                                   int firstAddress) {
+        TableLayout registerTable = findViewById(R.id.readingsTable);
+        int addressOffset = 0;
+
+        if (registerType == ModbusRegisters.INPUT_REGISTERS) {
+            addressOffset = firstAddress + 30001;
+        }
+        if (registerType == ModbusRegisters.HOLDING_REGISTERS) {
+            addressOffset = firstAddress + 40001;
+        }
+
+        for (int i = 0; i < results.size(); i++) {
+            TableRow row = registerTable.findViewById(i + addressOffset);
+            TextView value = row.findViewById(R.id.valueTextView);
+            value.setText(String.valueOf(results.get(i)));
+        }
+    }
+
+    public void initiateReadings(View view) {
         boolean readyToRead = modbusMaster != null && modbusMaster.isConnected();
+        ModbusRegisters registerType = getActiveReading();
+        int firstAddress = 0;
+        int numberOfAddresses = 10;
 
-        Log.d("Chosen readings", readings);
-
+        setUpTable(registerType, firstAddress, numberOfAddresses);
 
         if (activeProfile == null) {
             getProfile();
@@ -92,29 +162,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         if (!readyToRead) return;
 
-        if (readings.equals(getString(R.string.coils))) {
-            activeReadings = ModbusRegisters.COILS;
-            new ReadBitRegistersTask().execute();
-        } else if (readings.equals(getString(R.string.discrete_inputs))) {
-            activeReadings = ModbusRegisters.DISCRETE_INPUTS;
-            new ReadBitRegistersTask().execute();
-        } else if (readings.equals(getString(R.string.input_registers))) {
-            activeReadings = ModbusRegisters.INPUT_REGISTERS;
-            new ReadIntRegistersTask().execute();
-        } else if (readings.equals(getString(R.string.holding_registers))) {
-            activeReadings = ModbusRegisters.HOLDING_REGISTERS;
-            new ReadIntRegistersTask().execute();
-        } else {
-            activeReadings = null;
+        if (registerType == ModbusRegisters.COILS) {
+            new ReadBitRegistersTask().execute(0, firstAddress, numberOfAddresses);
+        } else if (registerType == ModbusRegisters.DISCRETE_INPUTS) {
+            new ReadBitRegistersTask().execute(1, firstAddress, numberOfAddresses);
+        } else if (registerType == ModbusRegisters.INPUT_REGISTERS) {
+            new ReadIntRegistersTask().execute(3, firstAddress, numberOfAddresses);
+        } else if (registerType == ModbusRegisters.HOLDING_REGISTERS) {
+            new ReadIntRegistersTask().execute(4, firstAddress, numberOfAddresses);
         }
     }
 
-    TableRow makeTableRow(TableLayout table, ModbusRegisters registerType, int address, String value, String description) {
+    TableRow makeTableRow(TableLayout table, ModbusRegisters registerType, int address) {
         TableRow row = (TableRow) LayoutInflater.from(this).inflate(R.layout.address_table_row,
                 table, false);
         TextView addressView = (TextView) row.findViewById(R.id.addressTextView);
-        TextView valueView = (TextView) row.findViewById(R.id.valueTextView);
-        EditText descriptionView = (EditText) row.findViewById(R.id.descriptionTextView);
 
         if (registerType == ModbusRegisters.COILS) {
             address += 1;
@@ -129,8 +191,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         addressView.setText("#" + String.valueOf(address));
-        valueView.setText(value);
-        descriptionView.setText(description);
+        row.setId(address);
 
         return row;
     }
@@ -139,30 +200,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         View header = findViewById(R.id.header);
         table.removeAllViews();
         table.addView(header);
-    }
-
-    void populateBitReadingsTable(List<Boolean> results, ModbusRegisters registerType) {
-        System.out.println(registerType + ": " + results);
-
-        TableLayout readingsTable = findViewById(R.id.readingsTable);
-        resetTable(readingsTable);
-
-        for (int i = 0; i < results.size(); i++) {
-            TableRow row = makeTableRow(readingsTable, registerType, i, String.valueOf(results.get(i)), "");
-            readingsTable.addView(row);
-        }
-    }
-
-    void populateIntReadingsTable(List<Integer> results, ModbusRegisters registerType) {
-        System.out.println(results);
-
-        TableLayout readingsTable = findViewById(R.id.readingsTable);
-        resetTable(readingsTable);
-
-        for (int i = 0; i < results.size(); i++) {
-            TableRow row = makeTableRow(readingsTable, registerType, i, String.valueOf(results.get(i)), "");
-            readingsTable.addView(row);
-        }
     }
 
     enum ModbusRegisters {
@@ -209,22 +246,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    private class ReadBitRegistersTask extends AsyncTask<Void, Void, List<Boolean>> {
+    private class ReadBitRegistersTask extends AsyncTask<Integer, Void, List<Boolean>> {
         ModbusRegisters registerType;
+        int firstAddress;
 
         @Override
-        public List<Boolean> doInBackground(Void... nothings) {
+        public List<Boolean> doInBackground(Integer... params) {
             List<Boolean> resultList = new ArrayList<>();
             boolean[] result = {};
 
+            firstAddress = params[1];
+
             try {
-                if (activeReadings == ModbusRegisters.COILS) {
+                if (params[0] == 0) {
                     registerType = ModbusRegisters.COILS;
-                    result = modbusMaster.ReadCoils(0, 10);
+                    result = modbusMaster.ReadCoils(params[1], params[2]);
                 }
-                if (activeReadings == ModbusRegisters.DISCRETE_INPUTS) {
+                if (params[0] == 1) {
                     registerType = ModbusRegisters.DISCRETE_INPUTS;
-                    result = modbusMaster.ReadDiscreteInputs(0, 10);
+                    result = modbusMaster.ReadDiscreteInputs(params[1], params[2]);
                 }
             } catch (IOException | ModbusException e) {
                 e.printStackTrace();
@@ -240,26 +280,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         public void onPostExecute(List<Boolean> resultList) {
-            populateBitReadingsTable(resultList, registerType);
+            updateTableWithBitResults(registerType, resultList, firstAddress);
         }
     }
 
-    private class ReadIntRegistersTask extends AsyncTask<Void, Void, List<Integer>> {
+    private class ReadIntRegistersTask extends AsyncTask<Integer, Void, List<Integer>> {
         ModbusRegisters registerType;
+        int firstAddress;
 
         @Override
-        public List<Integer> doInBackground(Void... nothings) {
+        public List<Integer> doInBackground(Integer... params) {
             List<Integer> resultList = new ArrayList<>();
             int[] result = {};
 
+            firstAddress = params[1];
+
             try {
-                if (activeReadings == ModbusRegisters.INPUT_REGISTERS) {
+                if (params[0] == 3) {
                     registerType = ModbusRegisters.INPUT_REGISTERS;
-                    result = modbusMaster.ReadInputRegisters(0, 10);
+                    result = modbusMaster.ReadInputRegisters(params[1], params[2]);
                 }
-                if (activeReadings == ModbusRegisters.HOLDING_REGISTERS) {
+                if (params[0] == 4) {
                     registerType = ModbusRegisters.HOLDING_REGISTERS;
-                    result = modbusMaster.ReadHoldingRegisters(0, 10);
+                    result = modbusMaster.ReadHoldingRegisters(params[1], params[2]);
                 }
             } catch (IOException | ModbusException e) {
                 e.printStackTrace();
@@ -275,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         public void onPostExecute(List<Integer> resultList) {
-            populateIntReadingsTable(resultList, registerType);
+            updateTableWithIntResults(registerType, resultList, firstAddress);
         }
     }
 }
