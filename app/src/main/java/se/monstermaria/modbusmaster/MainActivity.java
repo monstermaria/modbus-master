@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     DataBase db;
     Profile activeProfile;
     ModbusClient modbusMaster;
-    ModbusRegisters activeReadings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +76,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    ModbusRegisters getActiveReading() {
+    ModbusRegisters getActiveReadings() {
         Spinner spinner = (Spinner) findViewById(R.id.readingSpinner);
         String readings = (String) spinner.getSelectedItem();
+        ModbusRegisters activeReadings = null;
 
         if (readings.equals(getString(R.string.coils))) {
             activeReadings = ModbusRegisters.COILS;
@@ -89,9 +89,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             activeReadings = ModbusRegisters.INPUT_REGISTERS;
         } else if (readings.equals(getString(R.string.holding_registers))) {
             activeReadings = ModbusRegisters.HOLDING_REGISTERS;
-        } else {
-            activeReadings = null;
         }
+        
         return activeReadings;
     }
 
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void initiateReadings(View view) {
         boolean readyToRead = modbusMaster != null && modbusMaster.isConnected();
-        ModbusRegisters registerType = getActiveReading();
+        ModbusRegisters registerType = getActiveReadings();
         int firstAddress = 0;
         int numberOfAddresses = 10;
 
@@ -177,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         TableRow row = (TableRow) LayoutInflater.from(this).inflate(R.layout.address_table_row,
                 table, false);
         TextView addressView = (TextView) row.findViewById(R.id.addressTextView);
+        String addressString = "#";
 
         if (registerType == ModbusRegisters.COILS) {
             address += 1;
@@ -190,7 +190,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.e("Modbus", "Unknown Modbus register registerType");
         }
 
-        addressView.setText("#" + String.valueOf(address));
+        addressString += address;
+        addressView.setText(addressString);
         row.setId(address);
 
         return row;

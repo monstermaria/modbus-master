@@ -31,34 +31,26 @@
         android:id="@+id/readingsTable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:stretchColumns="2"
         android:background="@drawable/border">
 
         <TableRow
-            android:id="@+id/header"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:id="@+id/header">
 
             <TextView
                 android:id="@+id/addressTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:text="@string/modbus_address"
                 android:textStyle="bold"
                 style="@style/TableItem" />
 
             <TextView
                 android:id="@+id/valueTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:text="@string/value"
                 android:textStyle="bold"
                 style="@style/TableItem" />
 
             <TextView
                 android:id="@+id/descriptionTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1.0"
                 android:text="@string/description"
                 android:textStyle="bold"
                 style="@style/TableItem" />
