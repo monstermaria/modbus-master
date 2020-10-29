@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -30,10 +31,28 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
 
     public void showProfiles(List<Profile> profiles) {
         System.out.println(profiles.size());
+        Spinner profileSpinner;
+        int selected = 0;
 
-        Spinner profileSpinner = findViewById(R.id.profileSpinner);
+        profiles.add(0, new Profile());
+        profileSpinner = findViewById(R.id.profileSpinner);
+
+        SharedPreferences preferences = getSharedPreferences("Active profile", MODE_PRIVATE);
+        if (preferences != null) {
+            long id = preferences.getLong("ID", 0L);
+            if (id != 0) {
+                for (int i = 0; i < profiles.size(); i++) {
+                    if (profiles.get(i).id == id) {
+                        selected = i;
+                        break;
+                    }
+                }
+            }
+        }
+
         profileSpinner.setAdapter(new ProfileAdapter(profiles));
         profileSpinner.setOnItemSelectedListener(this);
+        profileSpinner.setSelection(selected);
     }
 
     private void saveProfileToPreferences() {
@@ -119,12 +138,16 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
     private class GetProfilesTask extends AsyncTask<Void, Void, List<Profile>> {
         @Override
         protected List<Profile> doInBackground(Void... nothings) {
+            Log.d("ProfileActivity", "read all profiles");
             return db.profileDao().getAll();
         }
 
         @Override
         protected void onPostExecute(List<Profile> profiles) {
+            Log.d("ProfileActivity", "profiles loaded");
+
             showProfiles(profiles);
         }
+
     }
 }

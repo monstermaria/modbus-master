@@ -1,11 +1,8 @@
 package se.monstermaria.modbusmaster;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.OnConflictStrategy;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -18,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -264,8 +260,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     .setNegativeButton("Cancel", null)
                     .show();
         }
-        if (address > 40000 && address <= 50000) {
+        if (address > 40000 && address < 50000) {
             // handle holding register
+            View viewToInsert = LayoutInflater.from(this).inflate(R.layout.set_holding_register, row, false);
+            new AlertDialog.Builder(this).setTitle("Change holding register " + address)
+                    .setMessage("Write a new value to holding register")
+                    .setView(viewToInsert)
+                    .setPositiveButton("Save", (dialog, which) -> {
+                        EditText newRegisterValue = viewToInsert.findViewById(R.id.holdingRegisterValue);
+                        int value = Integer.parseInt(newRegisterValue.getText().toString());
+
+                        Log.d("AlertDialog", "Save " + value);
+                        WriteHoldingRegisterTask task = new WriteHoldingRegisterTask();
+                        task.address = address;
+                        task.execute(value);
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         }
 
 
@@ -407,6 +418,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void onPostExecute(Void nothing) {
             new ReadBitRegistersTask().execute(0, address - 1, 1);
+        }
+    }
+
+    private class WriteHoldingRegisterTask extends AsyncTask<Integer, Void, Void> {
+        public int address = 0;
+
+        @Override
+        public Void doInBackground(Integer... values) {
+            try {
+                modbusMaster.WriteSingleRegister(address - 40001, values[0]);
+            } catch (IOException | ModbusException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public void onPostExecute(Void nothing) {
+            new ReadIntRegistersTask().execute(4, address - 40001, 1);
         }
     }
 }

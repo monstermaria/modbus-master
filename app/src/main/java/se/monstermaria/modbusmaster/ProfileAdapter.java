@@ -15,7 +15,6 @@ public class ProfileAdapter extends BaseAdapter {
 
     public ProfileAdapter(List<Profile> profiles) {
         this.profiles = profiles;
-        profiles.add(0, new Profile());
     }
 
     @Override
