@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -18,12 +19,14 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.re.easymodbus.exceptions.ModbusException;
 import de.re.easymodbus.modbusclient.ModbusClient;
 
 import se.monstermaria.modbusmaster.database.DataBase;
+import se.monstermaria.modbusmaster.database.ModbusAddress;
 import se.monstermaria.modbusmaster.database.Profile;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -66,6 +69,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivity(intent);
     }
 
+    public void saveDescriptions(View view) {
+        TableLayout registerTable = (TableLayout) findViewById(R.id.readingsTable);
+        int numberOfRows = registerTable.getChildCount();
+        List<ModbusAddress> addresses = new LinkedList<>();
+
+        for (int i = 1; i < numberOfRows; i++) {
+            TableRow row = (TableRow) registerTable.getChildAt(i);
+            EditText description = (EditText) row.findViewById(R.id.descriptionEditText);
+            ModbusAddress addressObject = new ModbusAddress();
+
+            addressObject.address = row.getId();
+            addressObject.description = description.getText().toString();
+
+            addresses.add(addressObject);
+        }
+
+        db.modbusAddressDao().insertAll(addresses);
+    }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         initiateReadings(view);
@@ -99,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         message += firstAddress + ", number of addresses: ";
         message += String.valueOf(numberOfAddresses);
         Log.d("Create table", message);
+        int[] addresses = new int[numberOfAddresses];
 
         TableLayout registerTable = findViewById(R.id.readingsTable);
         resetTable(registerTable);
@@ -106,6 +129,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         for (int i = firstAddress; i < firstAddress + numberOfAddresses; i++) {
             TableRow row = makeTableRow(registerTable, registerType, i);
             registerTable.addView(row);
+            addresses[i] = row.getId();
+        }
+
+        List<ModbusAddress> registers = db.modbusAddressDao().getAddresses(addresses);
+
+        for (ModbusAddress register : registers) {
+            TableRow row = registerTable.findViewById(register.address);
+            EditText description = row.findViewById(R.id.descriptionEditText);
+            description.setText(register.description);
         }
     }
 

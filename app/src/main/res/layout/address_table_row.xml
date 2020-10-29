@@ -10,7 +10,7 @@
         style="@style/TableItem" />
 
     <EditText
-        android:id="@+id/descriptionTextView"
+        android:id="@+id/descriptionEditText"
         style="@style/TableItem" />
 
 </TableRow>

@@ -50,7 +50,7 @@
                 style="@style/TableItem" />
 
             <TextView
-                android:id="@+id/descriptionTextView"
+                android:id="@+id/descriptionEditText"
                 android:text="@string/description"
                 android:textStyle="bold"
                 style="@style/TableItem" />
@@ -63,6 +63,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/save_decriptions"
-        android:onClick="initiateReadings"/>
+        android:onClick="saveDescriptions"/>
 
 </LinearLayout>

@@ -9,15 +9,17 @@ import androidx.room.PrimaryKey;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Profile.class}, exportSchema = false, version = 1)
+@Database(entities = {Profile.class, ModbusAddress.class}, exportSchema = false, version = 1)
 public abstract class DataBase extends RoomDatabase {
     public abstract ProfileDao profileDao();
+    public abstract ModbusAddressDao modbusAddressDao();
 
     private static DataBase db = null;
 
     public static DataBase getDataBase(Context context) {
         if (db == null) {
-            db = Room.databaseBuilder(context, DataBase.class, "modbus_database").build();
+            db = Room.databaseBuilder(context, DataBase.class, "modbus_database")
+                    .allowMainThreadQueries().build();
         }
         return db;
     }
