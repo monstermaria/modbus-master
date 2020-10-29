@@ -22,4 +22,5 @@
     <string name="description">Description</string>
     <string name="reload_readings">Reload readings</string>
     <string name="save_decriptions">Save descriptions</string>
+    <string name="change_value_of_coil">Change value of coil</string>
 </resources>

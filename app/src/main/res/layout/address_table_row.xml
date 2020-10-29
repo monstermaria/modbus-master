@@ -7,7 +7,8 @@
 
     <TextView
         android:id="@+id/valueTextView"
-        style="@style/TableItem" />
+        style="@style/TableItem"
+        android:onClick="onClick"/>
 
     <EditText
         android:id="@+id/descriptionEditText"

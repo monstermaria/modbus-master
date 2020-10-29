@@ -1,7 +1,11 @@
 package se.monstermaria.modbusmaster;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.OnConflictStrategy;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -11,8 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -29,7 +35,7 @@ import se.monstermaria.modbusmaster.database.DataBase;
 import se.monstermaria.modbusmaster.database.ModbusAddress;
 import se.monstermaria.modbusmaster.database.Profile;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
     DataBase db;
     Profile activeProfile;
     ModbusClient modbusMaster;
@@ -235,6 +241,36 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         table.addView(header);
     }
 
+    @Override
+    public void onClick(View v) {
+        TableRow row = (TableRow) v.getParent();
+        int address = row.getId();
+        Log.d("Clicked", String.valueOf(row.getId()));
+
+        if (address > 0 && address <= 10000) {
+            // handle coil
+            View viewToInsert = LayoutInflater.from(this).inflate(R.layout.set_coil, row, false);
+            new AlertDialog.Builder(this).setTitle("Change coil " + address)
+                    .setMessage("Write a new value to coil")
+                    .setView(viewToInsert)
+                    .setPositiveButton("Save", (dialog, which) -> {
+                        CompoundButton coilSwitch = viewToInsert.findViewById(R.id.coilValue);
+                        boolean value = coilSwitch.isChecked();
+                        Log.d("AlertDialog", "Save " + value);
+                        WriteCoilTask task = new WriteCoilTask();
+                        task.address = address;
+                        task.execute(value);
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        }
+        if (address > 40000 && address <= 50000) {
+            // handle holding register
+        }
+
+
+    }
+
     enum ModbusRegisters {
         COILS,
         DISCRETE_INPUTS,
@@ -352,6 +388,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void onPostExecute(List<Integer> resultList) {
             updateTableWithIntResults(registerType, resultList, firstAddress);
+        }
+    }
+
+    private class WriteCoilTask extends AsyncTask<Boolean, Void, Void> {
+        public int address = 0;
+
+        @Override
+        public Void doInBackground(Boolean... values) {
+            try {
+                modbusMaster.WriteSingleCoil(address - 1, values[0]);
+            } catch (IOException | ModbusException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public void onPostExecute(Void nothing) {
+            new ReadBitRegistersTask().execute(0, address - 1, 1);
         }
     }
 }
