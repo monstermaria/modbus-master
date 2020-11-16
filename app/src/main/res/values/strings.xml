@@ -3,7 +3,6 @@
     <string name="get_readings">Get readings</string>
     <string name="open_profile_page">Open profile page</string>
     <string name="profiles">Profiles</string>
-    <string name="create_new_profile">Create new profile</string>
     <string name="name">Name</string>
     <string name="ip_address">IP address</string>
     <string name="port">Port</string>
@@ -23,4 +22,10 @@
     <string name="reload_readings">Reload readings</string>
     <string name="save_decriptions">Save descriptions</string>
     <string name="change_value_of_coil">Change value of coil</string>
+    <string name="create_profile">Create new profile</string>
+    <string name="choose_communication_type">Choose communication type</string>
+    <string name="ethernet">TCP/IP</string>
+    <string name="serial">RTU</string>
+    <string name="serial_port_hint">1</string>
+    <string name="choose_profile">Choose a profile from the dropdown list or create a new profile</string>
 </resources>

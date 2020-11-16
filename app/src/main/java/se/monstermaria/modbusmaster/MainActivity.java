@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     DataBase db;
     Profile activeProfile;
     ModbusClient modbusMaster;
+    View placeholderView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
 
         db = DataBase.getDataBase(this);
+        placeholderView = new View(this);
 
         Spinner readingSpinner = (Spinner) findViewById(R.id.readingSpinner);
         readingSpinner.setAdapter(ArrayAdapter.createFromResource(this,
@@ -189,10 +191,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         setUpTable(registerType, firstAddress, numberOfAddresses);
 
-        if (activeProfile == null) {
-            getProfile();
-        }
-
         if (!readyToRead) return;
 
         if (registerType == ModbusRegisters.COILS) {
@@ -298,12 +296,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void onPostExecute(Profile profile) {
             if (profile == null) {
-                Log.d("Profile loaded", "Failed to load profile");
+                Log.d("Profile loaded", "Failed to load profile, opening profile activity");
+                chooseProfile(placeholderView);
             } else {
                 Log.d("Profile loaded", profile.toString());
                 activeProfile = profile;
-                modbusMaster = new ModbusClient(profile.ipAddress, profile.port);
-                new ConnectToServerTask().execute();
+
+                if (profile.useSerial) {
+                    Log.d("Profile loaded", "Serial communication not yet implemented");
+                } else {
+                    Log.d("Profile loaded", "TCP/IP initializing on " + profile.ipAddress + ":" + profile.port);
+                    modbusMaster = new ModbusClient(profile.ipAddress, profile.port);
+                    new ConnectToServerTask().execute();
+                }
             }
         }
     }

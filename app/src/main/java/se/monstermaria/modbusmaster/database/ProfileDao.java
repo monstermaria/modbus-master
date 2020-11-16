@@ -17,7 +17,7 @@ public interface ProfileDao {
     Profile getProfileById(long profileId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Profile profile);
+    long insert(Profile profile);
 
     @Delete
     void delete(Profile profile);

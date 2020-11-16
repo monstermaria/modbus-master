@@ -4,7 +4,6 @@
     <string name="get_readings">Hämta avläsningar</string>
     <string name="open_profile_page">Öppna profilsidan</string>
     <string name="profiles">Profiler</string>
-    <string name="create_new_profile">Skapa ny profil</string>
     <string name="name">Namn</string>
     <string name="ip_address">IP-adress</string>
     <string name="port">Port</string>
@@ -24,4 +23,10 @@
     <string name="reload_readings">Hämta avläsningar igen</string>
     <string name="save_decriptions">Spara beskrivningar</string>
     <string name="change_value_of_coil">Ändra värde på spole</string>
+    <string name="create_profile">Skapa ny profil</string>
+    <string name="choose_communication_type">Välj typ av kommunikation</string>
+    <string name="ethernet">"TCP/IP "</string>
+    <string name="serial">RTU</string>
+    <string name="serial_port_hint">1</string>
+    <string name="choose_profile">Välj en profil ur den utfällbara listan eller skapa en ny profil</string>
 </resources>
